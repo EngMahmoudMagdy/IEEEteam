@@ -1,41 +1,35 @@
 package com.magdy.ieeeteam;
 
-import android.support.annotation.IdRes;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener , RadioGroup.OnCheckedChangeListener {
-    EditText editText;
-    TextView  text;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener  {
+    EditText name , id , pass , number;
     Button button;
-    CheckBox checkBox ;
-    ToggleButton toggleButton ;
-    RadioGroup radioGroup;
+
     @Override
     protected void onCreate(Bundle o) {
         super.onCreate(o);
         setContentView(R.layout.activity_main);
 
-
-
-        text = (TextView) findViewById(R.id.text1);
-         editText = (EditText) findViewById(R.id.editText);
+         name = (EditText) findViewById(R.id.name);
+         id = (EditText) findViewById(R.id.id);
+         pass= (EditText) findViewById(R.id.pass);
+         number = (EditText) findViewById(R.id.num);
          button = (Button) findViewById(R.id.button);
-        checkBox = (CheckBox) findViewById(R.id.check);
-        radioGroup = (RadioGroup) findViewById(R.id.rd);
-        toggleButton = (ToggleButton) findViewById(R.id.toggle);
         button.setOnClickListener(this);
-        checkBox.setOnClickListener(this);
-        toggleButton.setOnClickListener(this);
-        radioGroup.setOnCheckedChangeListener(this);
+
 
     }
 
@@ -43,53 +37,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         if(view==button)
         {
-            String s = editText.getText().toString();
-            text.setText(s);
-            editText.setText("");
-        }
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setIcon(R.mipmap.ic_launcher);
+            builder.setTitle("Message");
+            builder.setMessage("Are you sure ?");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
 
-        else if(view==checkBox)
-        {
-            if(checkBox.isChecked())
-            {
-                text.setText(getString(R.string.checked));
-            }
-            else {
-                text.setText(getString(R.string.not_check));
-            }
-        }
-        else if(view==toggleButton)
-        {
-            if(toggleButton.isChecked())
-            {
-                text.setText("Tog Checked");
-            }
-            else {
-                text.setText("Tog not Checked");
-            }
+                    Intent intent = new Intent(getBaseContext(),Main2Activity.class);
+                    Profile profile = new Profile();
+                    profile.setId(id.getText().toString());
+                    profile.setName(name.getText().toString());
+                    profile.setNumber(Integer.parseInt(number.getText().toString()));
+                    profile.setPassword(pass.getText().toString());
+                    intent.putExtra("profile",profile);
+                    Toast.makeText(getBaseContext(),"Hello Main 2",Toast.LENGTH_SHORT).show();
+                    startActivity(intent);
 
-        }
-    }
-
-    @Override
-    public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
-        if(radioGroup==this.radioGroup)
-        {
-            switch(i)
-            {
-                case R.id.first:
-                    text.setText("First");
-                    break;
-                case R.id.sec:
-                    text.setText("sec");
-
-                    break;
-                case R.id.third:
-                    text.setText("third");
-
-                    break;
-            }
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Toast.makeText(getBaseContext(),"Canceled",Toast.LENGTH_SHORT).show();
+                }
+            });
+            builder.show();
         }
     }
+        private int i = 0 ;
+        public void notify(View view)
+        {
+            Intent intent = new Intent(getBaseContext(),NotifiyActivity.class);
+            PendingIntent pendingIntent =  PendingIntent.getActivity(this,0,intent,Intent.FLAG_ACTIVITY_NEW_TASK);
+            Notification.Builder builder = new Notification.Builder(this);
+            builder.setContentTitle("Launch this");
+            builder.setSubText("Welcome");
+            builder.setSmallIcon(R.mipmap.ic_launcher);
+            builder.addAction(android.R.drawable.ic_media_play,"Play",pendingIntent);
+            builder.addAction(android.R.drawable.ic_media_pause,"Pause",pendingIntent);
+            Notification notification = builder.build();
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            manager.notify(i++,notification);
+        }
 }
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IEEETeam</string>
+    <string name="app_name" translatable="false">IEEETeam</string>
     <string name="checked">Checked</string>
     <string name="not_check">not Checked</string>
 
